@@ -118,17 +118,25 @@ class AuthorizationView(BaseAuthorizationView, FormView):
             credentials["code_challenge"] = form.cleaned_data.get("code_challenge")
         if form.cleaned_data.get("code_challenge_method", False):
             credentials["code_challenge_method"] = form.cleaned_data.get("code_challenge_method")
+        body = {
+            "nonce": form.cleaned_data.get("nonce")
+        }
         scopes = form.cleaned_data.get("scope")
         allow = form.cleaned_data.get("allow")
 
         try:
-            uri, headers, body, status = self.create_authorization_response(
-                request=self.request, scopes=scopes, credentials=credentials, allow=allow
+            redirect_uri, headers, body, status = self.create_authorization_response(
+                self.request.get_raw_uri(),
+                request=self.request,
+                scopes=scopes,
+                credentials=credentials,
+                body=body,
+                allow=allow
             )
         except OAuthToolkitError as error:
             return self.error_response(error, application)
 
-        self.success_url = uri
+        self.success_url = redirect_uri
         log.debug("Success url for the request: {0}".format(self.success_url))
         return self.redirect(self.success_url, application)
 
@@ -184,11 +192,14 @@ class AuthorizationView(BaseAuthorizationView, FormView):
             # This is useful for in-house applications-> assume an in-house applications
             # are already approved.
             if application.skip_authorization:
-                uri, headers, body, status = self.create_authorization_response(
-                    request=self.request, scopes=" ".join(scopes),
-                    credentials=credentials, allow=True
+                redirect_uri, headers, body, status = self.create_authorization_response(
+                    self.request.get_raw_uri(),
+                    request=self.request,
+                    scopes=" ".join(scopes),
+                    credentials=credentials,
+                    allow=True
                 )
-                return self.redirect(uri, application)
+                return self.redirect(redirect_uri, application)
 
             elif require_approval == "auto":
                 tokens = get_access_token_model().objects.filter(
@@ -200,11 +211,14 @@ class AuthorizationView(BaseAuthorizationView, FormView):
                 # check past authorizations regarded the same scopes as the current one
                 for token in tokens:
                     if token.allow_scopes(scopes):
-                        uri, headers, body, status = self.create_authorization_response(
-                            request=self.request, scopes=" ".join(scopes),
-                            credentials=credentials, allow=True
+                        redirect_uri, headers, body, status = self.create_authorization_response(
+                            self.request.get_raw_uri(),
+                            request=self.request,
+                            scopes=" ".join(scopes),
+                            credentials=credentials,
+                            allow=True
                         )
-                        return self.redirect(uri, application)
+                        return self.redirect(redirect_uri, application)
 
         except OAuthToolkitError as error:
             return self.error_response(error, application)
