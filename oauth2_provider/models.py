@@ -424,7 +424,6 @@ class RefreshToken(AbstractRefreshToken):
         swappable = "OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL"
 
 
-@python_2_unicode_compatible
 class AbstractIDToken(models.Model):
     """
     An IDToken instance represents the actual token to
