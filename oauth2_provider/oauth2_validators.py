@@ -603,11 +603,15 @@ class OAuth2Validator(RequestValidator):
         token["expires_in"] = oauth2_settings.ACCESS_TOKEN_EXPIRE_SECONDS
 
     def _create_access_token(self, expires, request, token, source_refresh_token=None):
+        id_token = token.get('id_token', None)
+        if id_token:
+            id_token = IDToken.objects.get(token=id_token)
         access_token = AccessToken(
             user=request.user,
             scope=token["scope"],
             expires=expires,
             token=token["access_token"],
+            id_token=id_token,
             application=request.client,
             source_refresh_token=source_refresh_token,
         )
