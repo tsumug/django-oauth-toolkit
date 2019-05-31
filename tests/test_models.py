@@ -26,10 +26,10 @@ IDToken = get_id_token_model()
 class TestModels(TestCase):
 
     def setUp(self):
-        self.user = UserModel.objects.create_user("test_user", "test@example.com", "123456")
+        self.user = UserModel.objects.create_user("test@example.com", "123456")
 
     def test_allow_scopes(self):
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         app = Application.objects.create(
             name="test_app",
             redirect_uris="http://localhost http://example.com http://example.org",
@@ -87,7 +87,7 @@ class TestModels(TestCase):
         self.assertEqual("%s" % app, "test_app")
 
     def test_scopes_property(self):
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         app = Application.objects.create(
             name="test_app",
@@ -126,7 +126,7 @@ class TestModels(TestCase):
 class TestCustomModels(TestCase):
 
     def setUp(self):
-        self.user = UserModel.objects.create_user("test_user", "test@example.com", "123456")
+        self.user = UserModel.objects.create_user("test@example.com", "123456")
 
     def test_custom_application_model(self):
         """
@@ -269,7 +269,7 @@ class TestGrantModel(TestCase):
 class TestAccessTokenModel(TestCase):
 
     def setUp(self):
-        self.user = UserModel.objects.create_user("test_user", "test@example.com", "123456")
+        self.user = UserModel.objects.create_user("test@example.com", "123456")
 
     def test_str(self):
         access_token = AccessToken(token="test_token")
@@ -302,7 +302,7 @@ class TestRefreshTokenModel(TestCase):
 class TestClearExpired(TestCase):
 
     def setUp(self):
-        self.user = UserModel.objects.create_user("test_user", "test@example.com", "123456")
+        self.user = UserModel.objects.create_user("test@example.com", "123456")
         app1 = Application.objects.create(
             name="Test Application",
             redirect_uris=(
@@ -387,7 +387,7 @@ class TestClearExpired(TestCase):
         assert result == "ImproperlyConfigured"
 
     def test_clear_expired_tokens_with_tokens(self):
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         oauth2_settings.REFRESH_TOKEN_EXPIRE_SECONDS = 0
         ttokens = AccessToken.objects.count()
         expiredt = AccessToken.objects.filter(expires__lte=dt.now()).count()

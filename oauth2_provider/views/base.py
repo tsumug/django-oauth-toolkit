@@ -33,6 +33,8 @@ class BaseAuthorizationView(LoginRequiredMixin, OAuthLibMixin, View):
     * Implicit grant
 
     """
+    login_url = '/login/'
+    
     def dispatch(self, request, *args, **kwargs):
         self.oauth2_data = {}
         return super().dispatch(request, *args, **kwargs)

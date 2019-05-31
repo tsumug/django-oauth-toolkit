@@ -66,6 +66,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(serialize=False, primary_key=True)),
                 ('code', models.CharField(unique=True, max_length=255)),
+                ('nonce', models.CharField(null=True, blank=True, max_length=255)),
                 ('expires', models.DateTimeField()),
                 ('redirect_uri', models.CharField(max_length=255)),
                 ('scope', models.TextField(blank=True)),

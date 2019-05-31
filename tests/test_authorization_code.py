@@ -37,8 +37,8 @@ class ResourceView(ProtectedResourceView):
 class BaseTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        self.test_user = UserModel.objects.create_user("test_user", "test@example.com", "123456")
-        self.dev_user = UserModel.objects.create_user("dev_user", "dev@example.com", "123456")
+        self.test_user = UserModel.objects.create_user("test@example.com", "123456")
+        self.dev_user = UserModel.objects.create_user("dev@example.com", "123456")
 
         oauth2_settings.ALLOWED_REDIRECT_URI_SCHEMES = ["http", "custom-scheme"]
 
@@ -74,7 +74,7 @@ class TestRegressionIssue315(BaseTest):
     """
 
     def test_request_is_not_overwritten(self):
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code",
@@ -94,7 +94,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         If application.skip_authorization = True, should skip the authorization page.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.skip_authorization = True
         self.application.save()
 
@@ -114,7 +114,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         If application.skip_authorization = True, should skip the authorization page.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.skip_authorization = True
         self.application.save()
 
@@ -134,7 +134,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test error for an invalid client_id with response_type: code
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": "fakeclientid",
@@ -153,7 +153,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test response for a valid client_id with response_type: code
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -180,7 +180,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test response for a valid client_id with response_type: code
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -208,7 +208,7 @@ class TestAuthorizationCodeView(BaseTest):
         Test response for a valid client_id with response_type: code
         using a non-standard, but allowed, redirect_uri scheme.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -238,7 +238,7 @@ class TestAuthorizationCodeView(BaseTest):
             expires=timezone.now() + datetime.timedelta(days=1),
             scope="read write"
         )
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code",
@@ -265,7 +265,7 @@ class TestAuthorizationCodeView(BaseTest):
             expires=timezone.now() + datetime.timedelta(days=1),
             scope="read write"
         )
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code",
@@ -286,7 +286,7 @@ class TestAuthorizationCodeView(BaseTest):
             expires=timezone.now() + datetime.timedelta(days=1),
             scope="read write"
         )
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code",
@@ -302,7 +302,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test for default redirect uri if omitted from query string with response_type: code
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -320,7 +320,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test error when passing a forbidden redirect_uri in query string with response_type: code
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -336,7 +336,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test error when passing a wrong response_type in query string
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -352,7 +352,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: code
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -373,7 +373,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: code
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -394,7 +394,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test error when resource owner deny access
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -414,7 +414,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test optional state when resource owner deny access
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -433,7 +433,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test authorization code is given for an allowed request with a response_type not supported
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -452,7 +452,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test authorization code is given for an allowed request with a forbidden redirect_uri
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -470,7 +470,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Test validation of a malicious redirect_uri
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -489,7 +489,7 @@ class TestAuthorizationCodeView(BaseTest):
         Test authorization code is given for an allowed request with response_type: code
         using a non-standard, but allowed, redirect_uri scheme.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -511,7 +511,7 @@ class TestAuthorizationCodeView(BaseTest):
         Test error when resource owner deny access
         using a non-standard, but allowed, redirect_uri scheme.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -534,7 +534,7 @@ class TestAuthorizationCodeView(BaseTest):
         and query string is retained on redirection.
         See http://tools.ietf.org/html/rfc6749#section-3.1.2
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -557,7 +557,7 @@ class TestAuthorizationCodeView(BaseTest):
 
         See https://github.com/jazzband/django-oauth-toolkit/issues/238
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -579,7 +579,7 @@ class TestAuthorizationCodeView(BaseTest):
         """
         Tests that a redirection uri is matched using scheme + netloc + path
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -650,7 +650,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using basic authentication for client authentication
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -672,7 +672,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using a refresh token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -717,7 +717,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using a refresh token
         """
         oauth2_settings.REFRESH_TOKEN_GRACE_PERIOD_SECONDS = 120
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -769,7 +769,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Ensure existing refresh tokens are cleaned up when issuing new ones
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -801,7 +801,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using a refresh token without passing any scope
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -829,7 +829,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using a refresh token and wrong scopes
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -855,7 +855,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Try refreshing an access token with the same refresh token more than once
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -885,7 +885,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         once succeeds in the grace period and fails outside
         """
         oauth2_settings.REFRESH_TOKEN_GRACE_PERIOD_SECONDS = 120
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -923,7 +923,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Try refreshing an access token with the same refresh token more than once when not rotating tokens.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -955,7 +955,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using a bad authorization code
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         token_request_data = {
             "grant_type": "authorization_code",
@@ -971,7 +971,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using a bad grant_type string
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         token_request_data = {
             "grant_type": "UNKNOWN",
@@ -987,7 +987,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using an expired grant token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         g = Grant(
             application=self.application, user=self.test_user, code="BLAH",
             expires=timezone.now(), redirect_uri="", scope="")
@@ -1007,7 +1007,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using basic authentication for client authentication
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -1024,7 +1024,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using basic authentication for client authentication
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -1046,7 +1046,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using client_type: public
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -1069,7 +1069,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using client_type: public
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1094,7 +1094,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Request an access token using client_type: public
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1124,7 +1124,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         and PKCE enabled. Tests if the authorize get is successfull
         for the S256 algorithm
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1153,7 +1153,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         and PKCE enabled. Tests if the authorize get is successfull
         for the plain algorithm
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1184,7 +1184,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled with the S256 algorithm
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1214,7 +1214,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled with the plain algorithm
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1245,7 +1245,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled with an invalid algorithm
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1274,7 +1274,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled but with the code_challenge missing
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.skip_authorization = True
@@ -1303,7 +1303,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled but with the code_challenge_method missing
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1330,7 +1330,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled with the S256 algorithm and an invalid code_verifier
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1355,7 +1355,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled with the plain algorithm and an invalid code_verifier
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1380,7 +1380,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled with the S256 algorithm and the code_verifier missing
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1404,7 +1404,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public
         and PKCE enabled with the plain algorithm and the code_verifier missing
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1428,7 +1428,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         Request an access token using client_type: public and ensure redirect_uri is
         properly validated.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -1451,7 +1451,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Tests code exchange succeed when redirect uri matches the one used for code request
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -1486,7 +1486,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Tests code exchange fails when redirect uri does not match the one used for code request
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -1519,7 +1519,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Tests code exchange succeed when redirect uri matches the one used for code request
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.redirect_uris = "http://localhost http://example.com?foo=bar"
         self.application.save()
 
@@ -1556,7 +1556,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
         """
         Tests code exchange succeed when redirect uri matches the one used for code request
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.redirect_uris = "http://localhost http://example.com?foo=bar"
         self.application.save()
 
@@ -1594,7 +1594,7 @@ class TestAuthorizationCodeTokenView(BaseTest):
 
 class TestAuthorizationCodeProtectedResource(BaseTest):
     def test_resource_access_allowed(self):
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -1633,7 +1633,7 @@ class TestAuthorizationCodeProtectedResource(BaseTest):
         self.assertEqual(response, "This is a protected resource")
 
     def test_id_token_resource_access_allowed(self):
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -1701,7 +1701,7 @@ class TestDefaultScopes(BaseTest):
         """
         Test response for a valid client_id with response_type: code using default scopes
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         oauth2_settings._DEFAULT_SCOPES = ["read"]
 
         query_string = urlencode({

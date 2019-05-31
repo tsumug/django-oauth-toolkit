@@ -26,8 +26,8 @@ class ResourceView(ProtectedResourceView):
 class BaseTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        self.test_user = UserModel.objects.create_user("test_user", "test@example.com", "123456")
-        self.dev_user = UserModel.objects.create_user("dev_user", "dev@example.com", "123456")
+        self.test_user = UserModel.objects.create_user("test@example.com", "123456")
+        self.dev_user = UserModel.objects.create_user("dev@example.com", "123456")
 
         self.application = Application(
             name="Test Implicit Application",
@@ -58,7 +58,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         Test response for a valid client_id with response_type: token and default_scopes
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "token",
@@ -78,7 +78,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         Test response for a valid client_id with response_type: token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -105,7 +105,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         Test error for an invalid client_id with response_type: token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": "fakeclientid",
@@ -120,7 +120,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         Test for default redirect uri if omitted from query string with response_type: token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -138,7 +138,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         Test error when passing a forbidden redirect_uri in query string with response_type: token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -154,7 +154,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -175,7 +175,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         If application.skip_authorization = True, should skip the authorization page.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.skip_authorization = True
         self.application.save()
 
@@ -199,7 +199,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         Test error when resource owner deny access
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -220,7 +220,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         and query string is retained on redirection.
         See http://tools.ietf.org/html/rfc6749#section-3.1.2
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -240,7 +240,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
         """
         Tests that a redirection uri is matched using scheme + netloc + path
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -257,7 +257,7 @@ class TestImplicitAuthorizationCodeView(BaseTest):
 
 class TestImplicitTokenView(BaseTest):
     def test_resource_access_allowed(self):
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -290,7 +290,7 @@ class TestOpenIDConnectImplicitFlow(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: id_token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -321,7 +321,7 @@ class TestOpenIDConnectImplicitFlow(BaseTest):
         """
         If application.skip_authorization = True, should skip the authorization page.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.skip_authorization = True
         self.application.save()
 
@@ -355,7 +355,7 @@ class TestOpenIDConnectImplicitFlow(BaseTest):
         """
         If application.skip_authorization = True, should skip the authorization page.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.skip_authorization = True
         self.application.save()
 
@@ -378,7 +378,7 @@ class TestOpenIDConnectImplicitFlow(BaseTest):
         """
         Test error when resource owner deny access
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -398,7 +398,7 @@ class TestOpenIDConnectImplicitFlow(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -429,7 +429,7 @@ class TestOpenIDConnectImplicitFlow(BaseTest):
         """
         If application.skip_authorization = True, should skip the authorization page.
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.skip_authorization = True
         self.application.save()
 
@@ -463,7 +463,7 @@ class TestOpenIDConnectImplicitFlow(BaseTest):
         """
         Test error when resource owner deny access
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,

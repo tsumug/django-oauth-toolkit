@@ -18,8 +18,8 @@ class TestAuthorizedTokenViews(TestCase):
     TestCase superclass for Authorized Token Views" Test Cases
     """
     def setUp(self):
-        self.foo_user = UserModel.objects.create_user("foo_user", "test@example.com", "123456")
-        self.bar_user = UserModel.objects.create_user("bar_user", "dev@example.com", "123456")
+        self.foo_user = UserModel.objects.create_user("test@example.com", "123456")
+        self.bar_user = UserModel.objects.create_user("dev@example.com", "123456")
 
         self.application = Application(
             name="Test Application",
@@ -51,7 +51,7 @@ class TestAuthorizedTokenListView(TestAuthorizedTokenViews):
         """
         Test that when you have no tokens, an appropriate message is shown
         """
-        self.client.login(username="foo_user", password="123456")
+        self.client.login(email="test@example.com", password="123456")
 
         response = self.client.get(reverse("oauth2_provider:authorized-token-list"))
         self.assertEqual(response.status_code, 200)
@@ -61,7 +61,7 @@ class TestAuthorizedTokenListView(TestAuthorizedTokenViews):
         """
         Test that the view shows your token
         """
-        self.client.login(username="bar_user", password="123456")
+        self.client.login(email="dev@example.com", password="123456")
         AccessToken.objects.create(
             user=self.bar_user, token="1234567890",
             application=self.application,
@@ -79,7 +79,7 @@ class TestAuthorizedTokenListView(TestAuthorizedTokenViews):
         """
         Test that the view shows your tokens
         """
-        self.client.login(username="bar_user", password="123456")
+        self.client.login(email="dev@example.com", password="123456")
         AccessToken.objects.create(
             user=self.bar_user, token="1234567890",
             application=self.application,
@@ -101,7 +101,7 @@ class TestAuthorizedTokenListView(TestAuthorizedTokenViews):
         """
         Test that only currently logged-in user"s tokens are shown
         """
-        self.client.login(username="bar_user", password="123456")
+        self.client.login(email="dev@example.com", password="123456")
         AccessToken.objects.create(
             user=self.foo_user, token="1234567890",
             application=self.application,
@@ -145,7 +145,7 @@ class TestAuthorizedTokenDeleteView(TestAuthorizedTokenViews):
             scope="read write"
         )
 
-        self.client.login(username="foo_user", password="123456")
+        self.client.login(email="test@example.com", password="123456")
         url = reverse("oauth2_provider:authorized-token-delete", kwargs={"pk": self.token.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -161,7 +161,7 @@ class TestAuthorizedTokenDeleteView(TestAuthorizedTokenViews):
             scope="read write"
         )
 
-        self.client.login(username="bar_user", password="123456")
+        self.client.login(email="dev@example.com", password="123456")
         url = reverse("oauth2_provider:authorized-token-delete", kwargs={"pk": self.token.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
@@ -177,7 +177,7 @@ class TestAuthorizedTokenDeleteView(TestAuthorizedTokenViews):
             scope="read write"
         )
 
-        self.client.login(username="foo_user", password="123456")
+        self.client.login(email="test@example.com", password="123456")
         url = reverse("oauth2_provider:authorized-token-delete", kwargs={"pk": self.token.pk})
         response = self.client.post(url)
         self.assertFalse(AccessToken.objects.exists())
@@ -194,7 +194,7 @@ class TestAuthorizedTokenDeleteView(TestAuthorizedTokenViews):
             scope="read write"
         )
 
-        self.client.login(username="bar_user", password="123456")
+        self.client.login(email="dev@example.com", password="123456")
         url = reverse("oauth2_provider:authorized-token-delete", kwargs={"pk": self.token.pk})
         response = self.client.post(url)
         self.assertTrue(AccessToken.objects.exists())

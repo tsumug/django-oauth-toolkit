@@ -49,8 +49,8 @@ class ReadWriteResourceView(ReadWriteScopedResourceView):
 class BaseTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        self.test_user = UserModel.objects.create_user("test_user", "test@example.com", "123456")
-        self.dev_user = UserModel.objects.create_user("dev_user", "dev@example.com", "123456")
+        self.test_user = UserModel.objects.create_user("test@example.com", "123456")
+        self.dev_user = UserModel.objects.create_user("dev@example.com", "123456")
 
         self.application = Application(
             name="Test Application",
@@ -77,7 +77,7 @@ class TestScopesSave(BaseTest):
         """
         Test scopes are properly saved in grant
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -99,7 +99,7 @@ class TestScopesSave(BaseTest):
         """
         Test scopes are properly saved in access token
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -135,7 +135,7 @@ class TestScopesProtection(BaseTest):
         """
         Test access to a scope protected resource with correct scopes provided
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -177,7 +177,7 @@ class TestScopesProtection(BaseTest):
         """
         Test access to a scope protected resource with wrong scopes provided
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -219,7 +219,7 @@ class TestScopesProtection(BaseTest):
         """
         Test access to a multi-scope protected resource with wrong scopes provided
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -261,7 +261,7 @@ class TestScopesProtection(BaseTest):
         """
         Test access to a multi-scope protected resource with correct scopes provided
         """
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -302,7 +302,7 @@ class TestScopesProtection(BaseTest):
 
 class TestReadWriteScope(BaseTest):
     def get_access_token(self, scopes):
-        self.client.login(username="test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {

@@ -36,8 +36,8 @@ class ResourceView(ProtectedResourceView):
 class BaseTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        self.hy_test_user = UserModel.objects.create_user("hy_test_user", "test_hy@example.com", "123456")
-        self.hy_dev_user = UserModel.objects.create_user("hy_dev_user", "dev_hy@example.com", "123456")
+        self.hy_test_user = UserModel.objects.create_user("test_hy@example.com", "123456")
+        self.hy_dev_user = UserModel.objects.create_user("dev_hy@example.com", "123456")
 
         oauth2_settings.ALLOWED_REDIRECT_URI_SCHEMES = ["http", "custom-scheme"]
 
@@ -73,7 +73,7 @@ class TestRegressionIssue315Hybrid(BaseTest):
     """
 
     def test_request_is_not_overwritten_code_token(self):
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code token",
@@ -88,7 +88,7 @@ class TestRegressionIssue315Hybrid(BaseTest):
         assert "request" not in response.context_data
 
     def test_request_is_not_overwritten_code_id_token(self):
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code id_token",
@@ -103,7 +103,7 @@ class TestRegressionIssue315Hybrid(BaseTest):
         assert "request" not in response.context_data
 
     def test_request_is_not_overwritten_code_id_token_token(self):
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code id_token token",
@@ -123,7 +123,7 @@ class TestHybridView(BaseTest):
         """
         If application.skip_authorization = True, should skip the authorization page.
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.skip_authorization = True
         self.application.save()
 
@@ -143,7 +143,7 @@ class TestHybridView(BaseTest):
         """
         If application.skip_authorization = True, should skip the authorization page.
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.skip_authorization = True
         self.application.save()
 
@@ -163,7 +163,7 @@ class TestHybridView(BaseTest):
         """
         Test error for an invalid client_id with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": "fakeclientid",
@@ -182,7 +182,7 @@ class TestHybridView(BaseTest):
         """
         Test response for a valid client_id with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -209,7 +209,7 @@ class TestHybridView(BaseTest):
         """
         Test response for a valid client_id with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -237,7 +237,7 @@ class TestHybridView(BaseTest):
         Test response for a valid client_id with response_type: code
         using a non-standard, but allowed, redirect_uri scheme.
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -267,7 +267,7 @@ class TestHybridView(BaseTest):
             expires=timezone.now() + datetime.timedelta(days=1),
             scope="read write"
         )
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code id_token",
@@ -295,7 +295,7 @@ class TestHybridView(BaseTest):
             expires=timezone.now() + datetime.timedelta(days=1),
             scope="read write"
         )
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code id_token",
@@ -316,7 +316,7 @@ class TestHybridView(BaseTest):
             expires=timezone.now() + datetime.timedelta(days=1),
             scope="read write"
         )
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         query_string = urlencode({
             "client_id": self.application.client_id,
             "response_type": "code",
@@ -332,7 +332,7 @@ class TestHybridView(BaseTest):
         """
         Test for default redirect uri if omitted from query string with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -350,7 +350,7 @@ class TestHybridView(BaseTest):
         """
         Test error when passing a forbidden redirect_uri in query string with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -366,7 +366,7 @@ class TestHybridView(BaseTest):
         """
         Test error when passing a wrong response_type in query string
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         query_string = urlencode({
             "client_id": self.application.client_id,
@@ -382,7 +382,7 @@ class TestHybridView(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -404,7 +404,7 @@ class TestHybridView(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -426,7 +426,7 @@ class TestHybridView(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -449,7 +449,7 @@ class TestHybridView(BaseTest):
         """
         Test authorization code is given for an allowed request with response_type: code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -471,7 +471,7 @@ class TestHybridView(BaseTest):
         """
         Test error when resource owner deny access
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -490,7 +490,7 @@ class TestHybridView(BaseTest):
         """
         Test authorization code is given for an allowed request with a response_type not supported
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -509,7 +509,7 @@ class TestHybridView(BaseTest):
         """
         Test authorization code is given for an allowed request with a forbidden redirect_uri
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -527,7 +527,7 @@ class TestHybridView(BaseTest):
         """
         Test validation of a malicious redirect_uri
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -546,7 +546,7 @@ class TestHybridView(BaseTest):
         Test authorization code is given for an allowed request with response_type: code
         using a non-standard, but allowed, redirect_uri scheme.
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -569,7 +569,7 @@ class TestHybridView(BaseTest):
         Test authorization code is given for an allowed request with response_type: code
         using a non-standard, but allowed, redirect_uri scheme.
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -592,7 +592,7 @@ class TestHybridView(BaseTest):
         Test authorization code is given for an allowed request with response_type: code
         using a non-standard, but allowed, redirect_uri scheme.
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -616,7 +616,7 @@ class TestHybridView(BaseTest):
         Test error when resource owner deny access
         using a non-standard, but allowed, redirect_uri scheme.
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -638,7 +638,7 @@ class TestHybridView(BaseTest):
         and query string is retained on redirection.
         See http://tools.ietf.org/html/rfc6749#section-3.1.2
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -661,7 +661,7 @@ class TestHybridView(BaseTest):
         and query string is retained on redirection.
         See http://tools.ietf.org/html/rfc6749#section-3.1.2
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -684,7 +684,7 @@ class TestHybridView(BaseTest):
         and query string is retained on redirection.
         See http://tools.ietf.org/html/rfc6749#section-3.1.2
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -708,7 +708,7 @@ class TestHybridView(BaseTest):
 
         See https://github.com/evonove/django-oauth-toolkit/issues/238
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -727,7 +727,7 @@ class TestHybridView(BaseTest):
         """
         Tests that a redirection uri is matched using scheme + netloc + path
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         form_data = {
             "client_id": self.application.client_id,
@@ -764,7 +764,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using basic authentication for client authentication
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -786,7 +786,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using a bad authorization code
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         token_request_data = {
             "grant_type": "authorization_code",
@@ -802,7 +802,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using a bad grant_type string
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         token_request_data = {
             "grant_type": "UNKNOWN",
@@ -818,7 +818,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using an expired grant token
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         g = Grant(
             application=self.application, user=self.hy_test_user, code="BLAH",
             expires=timezone.now(), redirect_uri="", scope="")
@@ -838,7 +838,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using basic authentication for client authentication
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -855,7 +855,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using basic authentication for client authentication
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -877,7 +877,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using client_type: public
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         authorization_code = self.get_auth()
 
         token_request_data = {
@@ -900,7 +900,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using client_type: public
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -925,7 +925,7 @@ class TestHybridTokenView(BaseTest):
         """
         Request an access token using client_type: public
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -954,7 +954,7 @@ class TestHybridTokenView(BaseTest):
         Request an access token using client_type: public and ensure redirect_uri is
         properly validated.
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         self.application.client_type = Application.CLIENT_PUBLIC
         self.application.save()
@@ -977,7 +977,7 @@ class TestHybridTokenView(BaseTest):
         """
         Tests code exchange succeed when redirect uri matches the one used for code request
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -1012,7 +1012,7 @@ class TestHybridTokenView(BaseTest):
         """
         Tests code exchange fails when redirect uri does not match the one used for code request
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -1045,7 +1045,7 @@ class TestHybridTokenView(BaseTest):
         """
         Tests code exchange succeed when redirect uri matches the one used for code request
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.redirect_uris = "http://localhost http://example.com?foo=bar"
         self.application.save()
 
@@ -1082,7 +1082,7 @@ class TestHybridTokenView(BaseTest):
         """
         Tests code exchange succeed when redirect uri matches the one used for code request
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         self.application.redirect_uris = "http://localhost http://example.com?foo=bar"
         self.application.save()
 
@@ -1120,7 +1120,7 @@ class TestHybridTokenView(BaseTest):
 
 class TestHybridProtectedResource(BaseTest):
     def test_resource_access_allowed(self):
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -1159,7 +1159,7 @@ class TestHybridProtectedResource(BaseTest):
         self.assertEqual(response, "This is a protected resource")
 
     def test_id_token_resource_access_allowed(self):
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
 
         # retrieve a valid authorization code
         authcode_data = {
@@ -1227,7 +1227,7 @@ class TestDefaultScopesHybrid(BaseTest):
         """
         Test response for a valid client_id with response_type: code using default scopes
         """
-        self.client.login(username="hy_test_user", password="123456")
+        self.client.login(email="test_hy@example.com", password="123456")
         oauth2_settings._DEFAULT_SCOPES = ["read"]
 
         query_string = urlencode({
