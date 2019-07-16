@@ -570,6 +570,40 @@ class OAuth2Validator(RequestValidator):
                     previous_access_token = AccessToken.objects.filter(
                         source_refresh_token=refresh_token_instance
                     ).first()
+
+
+                    print("///***--------")
+                    key = jwk.JWK.from_pem(oauth2_settings.OIDC_RSA_PRIVATE_KEY.encode("utf8"))
+
+                    previous_id_token = IDToken.objects.filter(
+                        id=AccessToken.objects.filter(id=refresh_token_instance.access_token_id).first().id_token_id
+                    ).first()
+
+                    jwt_token = jwt.JWT(key=key, jwt=previous_id_token.token)
+                    claims = json.loads(jwt_token.claims)
+                    claims[]
+
+
+
+
+                        #
+                        # ^^
+                        # jwt_token = jwt.JWT(header=json.dumps({"alg": "RS256"}, default=str), claims=json.dumps(claims, default=str))
+                        # jwt_token.make_signed_token(key)
+                        #
+                        # id_token = self._save_id_token(jwt_token, request, expiration_time)
+                        # # this is needed by django rest framework
+                        # request.access_token = id_token
+                        # request.id_token = id_token
+                        # return jwt_token.serialize()
+                        #
+                        # ^^
+
+
+
+                    token["id_token"] = previous_id_token.token
+                    print("--------**////")
+
                     try:
                         refresh_token_instance.revoke()
                     except (AccessToken.DoesNotExist, RefreshToken.DoesNotExist):
@@ -608,7 +642,10 @@ class OAuth2Validator(RequestValidator):
         token["expires_in"] = oauth2_settings.ACCESS_TOKEN_EXPIRE_SECONDS
 
     def _create_access_token(self, expires, request, token, source_refresh_token=None):
+        print("///*********")
+
         id_token = token.get('id_token', None)
+        print("*********//")
         if id_token:
             id_token = IDToken.objects.get(token=id_token)
         access_token = AccessToken(

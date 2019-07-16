@@ -28,7 +28,22 @@ ACCESS_TOKEN_MODEL = getattr(settings, "OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL", "oa
 ID_TOKEN_MODEL = getattr(settings, "OAUTH2_PROVIDER_ID_TOKEN_MODEL", "oauth2_provider.IDToken")
 GRANT_MODEL = getattr(settings, "OAUTH2_PROVIDER_GRANT_MODEL", "oauth2_provider.Grant")
 REFRESH_TOKEN_MODEL = getattr(settings, "OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL", "oauth2_provider.RefreshToken")
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
 DEFAULTS = {
     "CLIENT_ID_GENERATOR_CLASS": "oauth2_provider.generators.ClientIdGenerator",
     "CLIENT_SECRET_GENERATOR_CLASS": "oauth2_provider.generators.ClientSecretGenerator",
@@ -42,8 +57,8 @@ DEFAULTS = {
     "READ_SCOPE": "read",
     "WRITE_SCOPE": "write",
     "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
-    "ACCESS_TOKEN_EXPIRE_SECONDS": 36000,
-    "ID_TOKEN_EXPIRE_SECONDS": 36000,
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 60,
+    "ID_TOKEN_EXPIRE_SECONDS": 60,
     "REFRESH_TOKEN_EXPIRE_SECONDS": None,
     "REFRESH_TOKEN_GRACE_PERIOD_SECONDS": 0,
     "ROTATE_REFRESH_TOKEN": True,
