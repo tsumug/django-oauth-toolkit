@@ -73,25 +73,26 @@ class UserInfoView(OAuthLibMixin, APIView):
 
     def get(self, request, *args, **kwargs):
         if not request.auth.id_token:
-            raise ValueError("id_token is expired")
-        # InvalidTokenError使いたい
-
-        access_token = request.META.get("HTTP_AUTHORIZATION", "").split(" ")[1]
+            raise ValueError("Missing IDToken")
 
         token = get_access_token_model().objects.filter(
-            token=access_token,
+            token=request.auth.token,
             expires__gt=timezone.now()
         ).order_by('-created').first()
 
         user = None
-        if token and token.user_id and request.auth.id_token.claims['sub'] == str(token.user_id):
+        claims = request.auth.id_token.get_claims(check_claims={"iss": oauth2_settings.OIDC_ISS_ENDPOINT})
+        if not claims:
+            raise ValueError("Invalid IDToken claims")
+
+        if token and token.user_id and claims['sub'] == str(token.user_id):
             user = get_user_model().objects.get(id=token.user_id)
 
         if user is None:
             raise ValueError("user not found")
 
         data = {
-            'claims': request.auth.id_token.claims,
+            'claims': claims,
             'sub': str(user.id),
         }
 
