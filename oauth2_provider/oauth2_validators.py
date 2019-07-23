@@ -18,6 +18,7 @@ from django.utils.timezone import make_aware
 from django.utils.translation import ugettext_lazy as _
 from oauthlib.oauth2 import RequestValidator
 from oauthlib.oauth2.rfc6749 import utils
+from oauthlib.oauth2.rfc6749.errors import InvalidRequestError
 
 from jwcrypto.common import JWException
 from jwcrypto import jwk, jwt
@@ -470,10 +471,12 @@ class OAuth2Validator(RequestValidator):
     def save_authorization_code(self, client_id, code, request, *args, **kwargs):
         expires = timezone.now() + timedelta(
             seconds=oauth2_settings.AUTHORIZATION_CODE_EXPIRE_SECONDS)
+        nonce = getattr(request, "nonce", None)
         g = Grant(
             application=request.client,
             user=request.user,
             code=code["code"],
+            nonce=nonce,
             expires=expires,
             redirect_uri=request.redirect_uri,
             scope=" ".join(request.scopes),
@@ -734,10 +737,6 @@ class OAuth2Validator(RequestValidator):
             "auth_time": int(dateformat.format(request.user.last_login, "U"))
         }
 
-        nonce = getattr(request, "nonce", None)
-        if nonce:
-            claims["nonce"] = nonce
-
         # TODO: create a function to check if we should add at_hash
         # http://openid.net/specs/openid-connect-core-1_0.html#CodeIDToken
         # http://openid.net/specs/openid-connect-core-1_0.html#ImplicitIDToken
@@ -757,6 +756,11 @@ class OAuth2Validator(RequestValidator):
             bits256 = sha256.hexdigest()[:32]
             c_hash = base64.urlsafe_b64encode(bits256.encode("ascii"))
             claims["c_hash"] = c_hash.decode("utf8")
+
+        if request.nonce:
+            claims["nonce"] = request.nonce
+        elif request.code:
+            claims["nonce"] = self.get_authorization_code_nonce(None, request.code, None, request)
 
         jwt_token = jwt.JWT(header=json.dumps({"alg": "RS256"}, default=str), claims=json.dumps(claims, default=str))
         jwt_token.make_signed_token(key)
@@ -799,3 +803,14 @@ class OAuth2Validator(RequestValidator):
         # https://github.com/idan/oauthlib/blob/master/oauthlib/oauth2/rfc6749/request_validator.py#L556
         # http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest id_token_hint section
         return True
+
+    def get_authorization_code_nonce(self, client_id, code, redirect_uri, request):
+        try:
+            grant = Grant.objects.get(code=code, application=request.client.id)
+        except ObjectDoesNotExist:
+            raise InvalidRequestError(
+                request=request,
+                description='Grant is not found.'
+            )
+        else:
+            return grant.nonce
