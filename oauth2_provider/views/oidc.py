@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse
+from oauthlib.oauth2.rfc6749.errors import ServerError
 
 from django.views.generic import View
 
@@ -72,47 +74,16 @@ class UserInfoView(OAuthLibMixin, APIView):
     """
 
     def get_userinfo_response(self, request, *args, **kwargs):
-        if not request.auth.id_token:
-            raise ValueError("Missing IDToken")
+        try:
+            uri, headers, body, status = self.create_userinfo_response(request)
+        except ServerError as error:
+            return HttpResponse(content=error, status=error.status_code)
+        except Exception as error:
+            return HttpResponse(content=error, status=500)
 
-        token = get_access_token_model().objects.filter(
-            token=request.auth.token,
-            expires__gt=timezone.now()
-        ).order_by('-created').first()
-
-        user = None
-        claims = request.auth.id_token.get_claims(check_claims={"iss": oauth2_settings.OIDC_ISS_ENDPOINT})
-        if not claims:
-            raise ValueError("Invalid IDToken claims")
-
-        if token and token.user_id and claims['sub'] == str(token.user_id):
-            user = get_user_model().objects.get(id=token.user_id)
-
-        if user is None:
-            raise ValueError("user not found")
-
-        data = {
-            'claims': claims,
-            'sub': str(user.id),
-        }
-
-        if not user.profile_image:
-            picture = ''
-        else:
-            picture = user.profile_image.storage.url(str(user.profile_image))
-
-        for scope in token.scope.split():
-            if scope == 'profile':
-                data['name'] = user.name
-            elif scope == 'email':
-                data['email'] = user.email
-            elif scope == 'phone':
-                data['phone_number'] = user.phone_number
-            elif scope == 'picture':
-                data['picture'] = picture
-
-        response = JsonResponse(data)
-        response["Access-Control-Allow-Origin"] = "*"
+        response = HttpResponse(content=body, status=status)
+        for k, v in headers.items():
+            response[k] = v
         return response
 
     def get(self, request, *args, **kwargs):

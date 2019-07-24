@@ -133,6 +133,18 @@ class OAuthLibMixin(object):
         core = self.get_oauthlib_core()
         return core.create_revocation_response(request)
 
+    def create_userinfo_response(self, request):
+        """
+        """
+        core = self.get_oauthlib_core()
+        return core.create_userinfo_response(request)
+
+    def validate_userinfo_request(self, request):
+        """
+        """
+        core = self.get_oauthlib_core()
+        return core.validate_userinfo_request(request)
+
     def verify_request(self, request):
         """
         A wrapper method that calls verify_request on `server_class` instance.

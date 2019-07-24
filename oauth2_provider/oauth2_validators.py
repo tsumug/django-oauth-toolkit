@@ -799,3 +799,30 @@ class OAuth2Validator(RequestValidator):
         # https://github.com/idan/oauthlib/blob/master/oauthlib/oauth2/rfc6749/request_validator.py#L556
         # http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest id_token_hint section
         return True
+
+    def get_userinfo_claims(self, request):
+        if not request.access_token.id_token:
+            raise FatalClientError("ID_token is not found")
+
+        data = {
+            'claims': request.access_token.id_token.claims,
+            'sub': str(request.user.id),
+        }
+
+        user = request.user
+        if not user.profile_image:
+            picture = ''
+        else:
+            picture = user.profile_image.storage.url(str(user.profile_image))
+
+        for scope in request.access_token.scope.split():
+            if scope == 'profile':
+                data['name'] = user.name
+            elif scope == 'email':
+                data['email'] = user.email
+            elif scope == 'phone':
+                data['phone_number'] = user.phone_number
+            elif scope == 'picture':
+                data['picture'] = picture
+
+        return data
