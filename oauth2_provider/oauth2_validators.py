@@ -836,7 +836,7 @@ class OAuth2Validator(RequestValidator):
             elif scope == 'email':
                 data['email'] = user.email
             elif scope == 'phone':
-                data['phone_number'] = user.phone_number
+                data['phone_number'] = user.phone_number.as_e164
             elif scope == 'picture':
                 data['picture'] = picture
 
