@@ -4,14 +4,17 @@ import json
 
 from django.http import JsonResponse
 from django.urls import reverse_lazy
+from django.http import HttpResponse
+from oauthlib.oauth2.rfc6749.errors import ServerError
+
 from django.views.generic import View
 
 from rest_framework.views import APIView
 
 from jwcrypto import jwk
 
+from .mixins import OAuthLibMixin
 from ..settings import oauth2_settings
-
 
 class ConnectDiscoveryInfoView(View):
     """
@@ -54,11 +57,30 @@ class JwksInfoView(View):
         return response
 
 
-class UserInfoView(APIView):
+class UserInfoView(OAuthLibMixin, APIView):
+    server_class = oauth2_settings.OAUTH2_SERVER_CLASS
+    validator_class = oauth2_settings.OAUTH2_VALIDATOR_CLASS
+    oauthlib_backend_class = oauth2_settings.OAUTH2_BACKEND_CLASS
+
     """
     View used to show Claims about the authenticated End-User
     """
-    def get(self, request, *args, **kwargs):
-        response = JsonResponse(request.auth.id_token.claims)
-        response["Access-Control-Allow-Origin"] = "*"
+
+    def get_userinfo_response(self, request, *args, **kwargs):
+        try:
+            uri, headers, body, status = self.create_userinfo_response(request)
+        except ServerError as error:
+            return HttpResponse(content=error, status=error.status_code)
+        except Exception as error:
+            return HttpResponse(content=error, status=500)
+
+        response = HttpResponse(content=body, status=status)
+        for k, v in headers.items():
+            response[k] = v
         return response
+
+    def get(self, request, *args, **kwargs):
+        return self.get_userinfo_response(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.get_userinfo_response(request, *args, **kwargs)

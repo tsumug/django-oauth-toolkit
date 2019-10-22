@@ -799,3 +799,6 @@ class OAuth2Validator(RequestValidator):
         # https://github.com/idan/oauthlib/blob/master/oauthlib/oauth2/rfc6749/request_validator.py#L556
         # http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest id_token_hint section
         return True
+
+    def get_userinfo_claims(self, request):
+        return []

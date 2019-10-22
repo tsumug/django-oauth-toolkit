@@ -512,6 +512,11 @@ class AbstractIDToken(models.Model):
         jwt_token = jwt.JWT(key=key, jwt=self.token)
         return json.loads(jwt_token.claims)
 
+    def get_claims(self, check_claims=None):
+        key = jwk.JWK.from_pem(oauth2_settings.OIDC_RSA_PRIVATE_KEY.encode("utf8"))
+        jwt_token = jwt.JWT(key=key, jwt=self.token, check_claims=check_claims)
+        return json.loads(jwt_token.claims)
+
     def __str__(self):
         return self.token
 

@@ -167,6 +167,28 @@ class OAuthLibCore(object):
         valid, r = self.server.verify_request(uri, http_method, body, headers, scopes=scopes)
         return valid, r
 
+    def validate_userinfo_request(self, request):
+        """
+        """
+        try:
+            self.server.validate_userinfo_request(request)
+        except oauth2.InvalidTokenError as error:
+            raise FatalClientError(error=error)
+        except oauth2.InsufficientScopeError as error:
+            raise OAuthToolkitError(error=error)
+
+    def create_userinfo_response(self, request):
+        """
+        """
+        uri, http_method, body, headers = self._extract_params(request)
+
+        headers, body, status = self.server.create_userinfo_response(uri, http_method, body,
+                                                                     headers)
+
+        uri = headers.get("Location", None)
+
+        return uri, headers, body, status
+
 
 class JSONOAuthLibCore(OAuthLibCore):
     """
